@@ -192,7 +192,8 @@ HARD_EXCLUDE = [
     r"\b(previa|palpita|antesala|expectativa por|se prepara|se alista|rumbo al|de cara al|clasifico|clasificaron|clasifica)\b",
     r"\b(se corre|se juega|se disputa\w*|se celebrara|se realizara|sera sede|defin\w+|disputa\w*|entregar\w+)\b",
     r"\b(a \d+ anos|anos despues|anos mas tarde|aniversario|efemerides|se cumplen|recuerd\w+|recordo|homenaje\w*|murio|fallecio|fallecimiento|adios a|luto|la historia|historico rival|palmares|listado|lista de|record\w*|vigente|defensor\w* del titulo)\b",
-    r"\b(apuest\w+|cuotas|pronostic\w*|prediccion\w*|predijo|tarot\w*|vidente|supercomputadora|simulador|videojuego|fifa \d+|quiniela)\b",
+    r"\b(apuest\w+|apost\w+|cuotas|pronostic\w*|prediccion\w*|predijo|tarot\w*|vidente|supercomputadora|simulador|videojuego|fifa \d+|quiniela|influencer\w*|donacion\w*|salia campeon)\b",
+    r"\b(mercado|habria\w*|sacudiria|cerraria|firmaria|llegaria|pagaria|estaria|iria|wwe|lucha libre)\b",
     r"\b(ranking|encuesta|segun la ia|inteligencia artificial elige|los mejores de la historia)\b",
     r"\b(semifinal\w*|cuartos de final|octavos de final|fase de grupos|debut\w*)\b",
     r"\b(horoscopo|receta|estreno|serie|pelicula|documental|trailer)\b",
@@ -263,7 +264,9 @@ def classify(title: str, desc: str):
     # Titulares interrogativos nunca son confirmaciones ("¿Argentina campeón?")
     if "?" in title or "¿" in title:
         return "reject", None, ["interrogative-title"]
-    nt = norm(title)
+    # Clasificar SIN el nombre del medio: "Reconquista Radios" no es una conquista
+    # y "El Futbolero Argentina" no convierte una noticia en argentina.
+    nt = norm(strip_source(title))
     nd = norm(desc)[:400]
     reasons = []
 
