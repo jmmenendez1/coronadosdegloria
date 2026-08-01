@@ -44,7 +44,7 @@ def main():
     else:
         subject = f"🇦🇷 {len(events)} coronaciones de gloria hoy"
 
-    lines = ["**¡Salió otra! Argentina al podio del mundo:**", ""]
+    lines = ["**¡Buen día! Hoy te despertás coronado: Argentina al podio del mundo.**", ""]
     for ev in events:
         emoji = MEDAL_EMOJI.get(ev["medal"], "🏅")
         src = f" — _{ev['source']}_" if ev.get("source") else ""

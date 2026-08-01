@@ -26,6 +26,7 @@
   .hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.4rem,6vw,4.3rem);line-height:1.05;letter-spacing:-.5px}
   .hero h1 .gloria{color:var(--gold-soft);font-style:italic}
   .anthem{margin-top:14px;font-family:'Fraunces',serif;font-style:italic;font-size:clamp(1rem,2.2vw,1.25rem);color:#C9D8EA}
+  .anthem2{margin-top:4px;font-family:'Fraunces',serif;font-style:italic;font-size:clamp(.88rem,1.9vw,1.05rem);color:#9DB4CC}
   .hero p.sub{max-width:620px;margin:22px auto 0;font-size:1.05rem;color:#DCE7F2}
   .band{display:flex;justify-content:center;gap:8px;margin-top:26px}
   .band span{width:52px;height:6px;border-radius:3px}
@@ -42,6 +43,10 @@
   .signup button{padding:13px 22px;border:none;border-radius:12px;background:var(--celeste-deep);color:#fff;font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit;transition:background .15s}
   .signup button:hover{background:var(--navy)}
   .signup .fine{font-size:.78rem;color:var(--muted);margin-top:12px}
+
+  .meme{margin:40px auto 6px;text-align:center;max-width:460px}
+  .meme img{width:100%;max-width:330px;border-radius:18px;border:1px solid var(--line);box-shadow:0 14px 34px rgba(21,42,69,.14)}
+  .meme p{margin-top:14px;font-size:.92rem;color:var(--muted);max-width:420px;margin-left:auto;margin-right:auto}
 
   .stats{display:flex;justify-content:center;gap:14px;margin:38px 0 8px;flex-wrap:wrap}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 22px;text-align:center;min-width:110px}
@@ -73,20 +78,26 @@
 <header class="hero">
   <span class="sol">☀️</span>
   <h1>Otra Coronación<br>de <span class="gloria">Gloria</span></h1>
-  <p class="anthem">«Coronados de gloria vivamos…» — y acá las contamos todas.</p>
-  <p class="sub">Un rastreador automático que revisa las noticias todas las mañanas buscando argentinos y argentinas que salieron <strong>primeros, segundos o terceros</strong> en cualquier competencia mundial. Fútbol, hockey, matemática, asado, tango, lo que sea. Si hay podio, te enterás.</p>
+  <p class="anthem">«Coronados de gloria vivamos…»</p>
+  <p class="anthem2">y acá las contamos todas.</p>
+  <p class="sub">Un rastreador automático que revisa las noticias todas las mañanas, tempranito, buscando argentinos y argentinas que salieron <strong>primeros, segundos o terceros</strong> en cualquier competencia mundial. Fútbol, hockey, matemática, asado, tango, lo que sea. Si hay podio, te despertás coronado.</p>
   <div class="band"><span class="c"></span><span class="w"></span><span class="g"></span><span class="w"></span><span class="c"></span></div>
 </header>
 
 <div class="wrap">
   <section class="signup" id="suscribite">
     <h2>🇦🇷 No te pierdas ninguna</h2>
-    <p>Dejá tu email y recibí un correo <strong>solo los días que hay una coronación</strong>. Sin spam, sin resúmenes vacíos: si Argentina no se subió a un podio, silencio.</p>
+    <p>Dejá tu email y despertate con la noticia: un correo a la mañana, <strong>solo los días que hay una coronación</strong>. Sin spam, sin resúmenes vacíos: si Argentina no se subió a un podio, silencio.</p>
     <form action="https://buttondown.com/api/emails/embed-subscribe/coronadosdegloria" method="post" target="popupwindow" onsubmit="window.open('https://buttondown.com/coronadosdegloria','popupwindow')">
       <input type="email" name="email" placeholder="tu@email.com" required>
       <button type="submit">Quiero enterarme 🏆</button>
     </form>
     <p class="fine">Confirmás tu suscripción con un click (revisá el correo). Te podés dar de baja cuando quieras.</p>
+  </section>
+
+  <section class="meme">
+    <img src="assets/me-despierto.png" alt="Meme: me despierto → otra coronación de gloria" loading="lazy">
+    <p>El ciclo ideal del argentino. Nuestro laburo es que se repita lo más seguido posible: el rastreador corre tempranito cada mañana, así te despertás con la coronación ya servida. 🧉</p>
   </section>
 
   <div class="stats" id="stats" hidden>
