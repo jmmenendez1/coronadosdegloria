@@ -82,5 +82,25 @@
     ],
     "medal": "oro",
     "title": "Argentina campeón del mundo de longcasting, salvador bustos bicampeón en 100 y 125 grs - El diario de Tandil"
+  },
+  "eb2c01ef4a23": {
+    "date": "2026-07-31",
+    "core": [
+      "2026",
+      "eldoradense",
+      "orgullo"
+    ],
+    "medal": "oro",
+    "title": "¡Argentina Campeona del Mundo! Orgullo eldoradense en la Copa Mundial WMH 2026 - Norte Misionero"
+  },
+  "c7d6f8cc89b5": {
+    "date": "2026-08-01",
+    "core": [
+      "2026",
+      "corona"
+    ],
+    "medal": "oro",
+    "dup_of": "eb2c01ef4a23",
+    "title": "Argentina se corona campeona en la Copa Mundial WMH 2026 - Consulta Monterrey"
   }
 }
