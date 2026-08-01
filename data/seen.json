@@ -1,1 +1,86 @@
-{}
+{
+  "b60ba6cf61d8": {
+    "date": "2026-07-19",
+    "core": [
+      "espana",
+      "pudo"
+    ],
+    "medal": "plata",
+    "title": "Argentina no pudo con España y es subcampeón mundial - Mendoza Post"
+  },
+  "1f870d0f7bd1": {
+    "date": "2026-07-19",
+    "core": [
+      "cayo",
+      "enorme",
+      "espana",
+      "vacio"
+    ],
+    "medal": "plata",
+    "dup_of": "b60ba6cf61d8",
+    "title": "Argentina se vació, cayó con España y es un enorme subcampeón del mundo - La Capital"
+  },
+  "52b5de124c80": {
+    "date": "2026-07-20",
+    "core": [
+      "alcanzo",
+      "corazon",
+      "espana",
+      "nuevo"
+    ],
+    "medal": "plata",
+    "dup_of": "b60ba6cf61d8",
+    "title": "Subcampeones: A la Argentina no le alcanzó el corazón y España es el nuevo campeón mundial - estacionsur.ar"
+  },
+  "acd7afb0edaf": {
+    "date": "2026-07-23",
+    "core": [
+      "cohete",
+      "competencia",
+      "crearon",
+      "estados",
+      "estudiantes",
+      "ganaron",
+      "supersonico",
+      "unidos"
+    ],
+    "medal": "oro",
+    "title": "Estudiantes argentinos crearon un cohete supersónico y ganaron la competencia mundial en Estados Unidos - Clarin.com"
+  },
+  "abbe23e992fa": {
+    "date": "2026-07-25",
+    "core": [
+      "bronce",
+      "estudiante",
+      "gracias",
+      "internacional",
+      "olimpiada",
+      "quimica",
+      "rosarino"
+    ],
+    "medal": "bronce",
+    "title": "Bronce para Argentina en la Olimpíada Internacional de Química gracias a un estudiante rosarino - El Diario de Carlos Paz"
+  },
+  "567a25fbbdf4": {
+    "date": "2026-07-30",
+    "core": [
+      "paleta",
+      "pelota",
+      "presencia",
+      "tricolor"
+    ],
+    "medal": "oro",
+    "title": "Pelota paleta: Argentina campeón del mundo con presencia tricolor - El diario de Tandil"
+  },
+  "ade7327efd97": {
+    "date": "2026-07-30",
+    "core": [
+      "bicampeon",
+      "bustos",
+      "longcasting",
+      "salvador"
+    ],
+    "medal": "oro",
+    "title": "Argentina campeón del mundo de longcasting, salvador bustos bicampeón en 100 y 125 grs - El diario de Tandil"
+  }
+}

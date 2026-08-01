@@ -82,8 +82,12 @@ tras ante como mas muy este esta estos estas ese esa hoy ayer the of in at on an
 a las los una del ante entre sobre desde hasta año años vez tambien también
 """.split())
 
+def strip_source(title: str) -> str:
+    """Google News agrega ' - Fuente' al final del título; sacarlo para no contaminar el dedup."""
+    return title.rsplit(" - ", 1)[0] if " - " in title else title
+
 def sig_tokens(s: str):
-    return {t for t in norm(s).split() if len(t) >= 4 and t not in STOPWORDS}
+    return {t for t in norm(strip_source(s)).split() if len(t) >= 4 and t not in STOPWORDS}
 
 # --------------------------------------------------------------- patterns ---
 # Todo se evalúa sobre texto normalizado (minúsculas, sin acentos).
@@ -92,7 +96,7 @@ ARG = r"(argentin\w+|albiceleste|los pumas|las leonas|los gladiadores|las panter
 WORLD = r"(mundial\w*|del mundo|world|olimpiada internacional|olimpiada iberoamericana|international olympiad|planetari\w+)"
 
 # Verbos de logro (conjugaciones frecuentes en titulares)
-AV = r"(se consagr\w+|se coron\w+|se proclam\w+|conquist\w+|gan(?:o|aron)|logr(?:o|aron)|obtuv(?:o|ieron)|consigui(?:o|eron)|se qued(?:o|aron) con|se llev(?:o|aron))"
+AV = r"(se consagr\w+|se coron\w+|se proclam\w+|conquist\w+|gan(?:o|aron)|logr(?:o|aron)|obtuv(?:o|ieron)|consigui(?:o|eron)|se qued(?:o|aron) con|se llev(?:o|aron)|arrebat\w+|recuper(?:o|aron))"
 # "campeon" sin que sea sub/vice campeón
 CHAMP = r"(?<!sub)(?<!vice)campeon"
 
@@ -117,9 +121,9 @@ PODIUM_PATTERNS = [
     # --- oro ---
     (rf"{CHAMP}\w* (mundial|del mundo)", "oro"),
     (rf"{CHAMP}\w* .{{0,30}}\bmundial\b", "oro"),
-    (rf"{AV}.{{0,45}}(el )?(titulo )?(mundial\w*|del mundo)", "oro"),
+    (rf"{AV}(?:(?!final|semifinal).){{0,45}}(el )?(titulo )?(mundial\w*|del mundo)", "oro"),
     (rf"{AV} el (titulo|campeonato|mundial)", "oro"),
-    (rf"(mundial\w*|del mundo).{{0,45}}(se consagr\w+|se coron\w+|conquist\w+|gan(?:o|aron)|{CHAMP}\w*)", "oro"),
+    (rf"(?<!final del )(mundial\w*|del mundo)(?:(?!final).){{0,45}}(se consagr\w+|se coron\w+|conquist\w+|gan(?:o|aron)|{CHAMP}\w*)", "oro"),
     (rf"medalla\w* de oro.{{0,60}}{WORLD}", "oro"),
     (rf"{AV} el oro.{{0,60}}{WORLD}", "oro"),
     (rf"\bel oro (mundial|en el mundial\w*|del mundial\w*)", "oro"),
@@ -136,17 +140,73 @@ PODIUM_PATTERNS = [
 PODIUM_RE = [(re.compile(p), m) for p, m in PODIUM_PATTERNS]
 ARG_RE = re.compile(rf"\b{ARG}\b")
 
-# Rechazo duro: previa / futuro / historia / ruido
+# Países/gentilicios NO argentinos (para atribuir el logro al sujeto correcto)
+FOREIGN = (
+    r"(espan\w+|spain|spanish|la roja|la furia|francia|frances\w*|france|french|"
+    r"inglaterra|ingles\w*|england|english|brit\w+|alem\w+|german\w+|brasil\w+|brazil\w+|"
+    r"ital\w+|urugua\w+|chile\b|chilen\w+|mexic\w+|colombi\w+|portug\w+|"
+    r"holand\w+|neerland\w+|paises bajos|dutch|croa\w+|japon\w+|japan\w*|"
+    r"china\b|chin[oa]s?\b|marroqu\w+|marruecos|estados unidos|estadounid\w+|eeuu|"
+    r"belg\w+|suiz\w+|suec\w+|norueg\w+|danes\w+|dinamarca|polac\w+|polonia|"
+    r"austral\w+|canad\w+|kenia\w*|etiop\w+|jamaiq\w+|jamaica|cuban\w+|cuba\b|"
+    r"venezol\w+|venezuela|chec\w+|rus\w+|ucrani\w+|serbi\w+|griego\w*|grecia|"
+    r"turc\w+|turquia|irani\w+|iran\b|indi[oa]s?\b|india\b|corean\w+|corea\b)"
+)
+FOREIGN_RE = re.compile(rf"\b{FOREIGN}\b")
+
+# Verbos de derrota aplicados a Argentina ("España venció a Argentina...")
+DEFEAT_RE = re.compile(
+    r"\b(vencio|vence|derrot\w+|super(?:o|a)|elimin(?:o|a)|tumb(?:o|a)|destron(?:o|a)|"
+    r"aplast(?:o|a)|arras(?:o|a)|domin(?:o|a)|derrib(?:o|a)|acab(?:o|a) con|le gano|gano|"
+    r"se impuso a|remont(?:o|a)|arrebat\w+|romp\w+|beat|beats|defeated|edged?|downed|topped)"
+    r".{0,34}argentin"
+)
+# Argentina como rival vencido: "triunfo/victoria/final/gritó ANTE Argentina", "España 1-0 Argentina"
+ANTE_RE = re.compile(r"\bante (la |una )?(seleccion |el seleccionado )?argentin")
+SCORE_RE = re.compile(rf"\b{FOREIGN}\b[^a-z]{{0,4}}\d+ \d+[^a-z]{{0,4}}argentin")
+# Argentina como perdedor / no ganador
+ARG_LOST_RE = re.compile(
+    r"\bargentin\w+\b.{0,60}\b(cayo|perdio|no pudo|no le alcanzo|no logro|fue superad\w+|"
+    r"fue derrotad\w+|se vacio|dejo todo|dejo el alma|dio pelea|quedo eliminad\w+|se despidio)\b"
+    r"|\b(cayo|perdio|no pudo) (la |una )?(seleccion |el seleccionado )?argentin"
+)
+# Rescates: el logro argentino real dentro de una noticia de derrota (subcampeonato/bronce)
+SILVER_RESCUE_RE = re.compile(
+    r"argentin\w+[^.]{0,30}\bes (un enorme |una enorme )?subcampeon"
+    r"|argentin\w+[^.]{0,25}\bsubcampeon"
+    r"|subcampeon\w*[:,]? a? ?(la |el )?(seleccion |seleccionado )?argentin"
+    r"|subcampeonato\w*.{0,30}argentin|argentin\w+.{0,30}subcampeonato"
+)
+BRONZE_RESCUE_RE = re.compile(
+    r"(bronce|tercer puesto|tercer lugar) (mundial\w* )?para (la |el |los |las )?argentin"
+    r"|argentin\w+.{0,25}se qued\w+ con el (bronce|tercer puesto)"
+)
+# Años pasados junto a frases de campeonato = nota histórica/comparativa
+OLD_YEAR_RE = re.compile(r"\b(19[0-9]{2}|200[0-9]|201[0-9]|202[0-5])\b")
+
+# Rechazo duro: previa / futuro / historia / ruido / declaraciones / mercado de pases
 HARD_EXCLUDE = [
-    r"\b(buscara|buscaran|ira por|iran por|va por|van por|va en busca|suena con|suenan con|aspira|quiere ser|puede (ser|salir)|podria\w?|podrian|podra|podran|intentara|jugara|jugaran|definira|definiran|enfrentara|enfrentaran|se mide|se miden|se enfrenta|chocara)\b",
-    r"\b(donde ver|como ver|a que hora|hora y tv|en vivo|en directo|minuto a minuto|formaciones|posibles formaciones|fixture|calendario|sorteo|entradas|cuanto (sale|cuesta))\b",
+    r"\b(buscara|buscaran|ira por|iran por|va por|van por|va en busca|suena con|suenan con|aspira|quiere ser|puede\w*|pueden|podria\w*|podrian|podra|podran|intentara|jugara|jugaran|enfrentara|enfrentaran|enfrentarse|se mide|se miden|se enfrenta|chocara|viajara\w*|para ser campeon)\b",
+    r"\bsi (la seleccion|argentina|sale|gana|es|se consagra)\b",
+    r"\b(donde ver|como ver|a que hora|hora y tv|en vivo|en directo|minuto a minuto|formaciones|posibles formaciones|fixture|calendario|sorteo|entradas|amistoso\w*)\b",
     r"\b(previa|palpita|antesala|expectativa por|se prepara|se alista|rumbo al|de cara al|clasifico|clasificaron|clasifica)\b",
-    r"\b(a \d+ anos|anos despues|aniversario|efemerides|se cumplen|recuerd\w+|recordo|homenaje\w*|murio|fallecio|fallecimiento|adios a|luto)\b",
-    r"\b(apuestas|cuotas|pronostico\w*|simulador|videojuego|fifa \d+|quiniela)\b",
+    r"\b(se corre|se juega|se disputa\w*|se celebrara|se realizara|sera sede|defin\w+|disputa\w*|entregar\w+)\b",
+    r"\b(a \d+ anos|anos despues|anos mas tarde|aniversario|efemerides|se cumplen|recuerd\w+|recordo|homenaje\w*|murio|fallecio|fallecimiento|adios a|luto|la historia|historico rival|palmares|listado|lista de|record\w*|vigente|defensor\w* del titulo)\b",
+    r"\b(apuest\w+|cuotas|pronostic\w*|prediccion\w*|predijo|tarot\w*|vidente|supercomputadora|simulador|videojuego|fifa \d+|quiniela)\b",
     r"\b(ranking|encuesta|segun la ia|inteligencia artificial elige|los mejores de la historia)\b",
     r"\b(semifinal\w*|cuartos de final|octavos de final|fase de grupos|debut\w*)\b",
     r"\b(horoscopo|receta|estreno|serie|pelicula|documental|trailer)\b",
-    r"\b(visito|visita a|de visita|fue recibido|recibio a|agasaj\w+|caravana|desfil\w+|festej\w+ con los hinchas)\b",
+    r"\b(visito|visita a|de visita|fue recibido|recibio (a|en)|agasaj\w+|caravana|desfil\w+|festej\w+|celebr\w+|multitud|recibimiento|regres\w+|llegada|arribo|ezeiza|hinchas|aficionados)\b",
+    r"\b(dijo|aseguro|asegura|afirmo|opino|hablo|revelo|conto|confeso|critico|cuestiono|liquido|elogio|felicit\w+|lament\w+|carta|mensaje|palabras|reaccion\w*)\b",
+    r"\b(la prensa|los medios|las tapas|portada\w*|reflejaron|titularon|se rinde|asi titularon)\b",
+    r"\b(resumen|highlights|los goles|gol y resumen|repaso|en fotos|informe|analisis|cronica|memes?|broma|viral\w*|se viraliza|(hizo|hace) creer|engan\w+)\b",
+    r"\b(cuant\w+|millonari\w+|dinero|premio economico|recaud\w+|negocio\w*|ventas|audiencia|rating|millones en tv|sponsor\w*|adidas|nike|gin|whisky|cerveza|vodka|bebida\w*)\b",
+    r"\b(sueno|maldicion|ilusion\w*|esperanza\w*|dolor|promesa|se erige|por que\b)\b",
+    r"\b(milei|trump|infantino|papa|presidente)\b",
+    r"\b(oferta|traspaso|fichaje|fichar\w*|se iria|se va al?|prestamo|recalar|mudarse|cambiara de equipo|busca\b|pretende|contratar\w*|amenaza\w*|amenazado)\b",
+    r"\b(un campeon|una campeona|el campeon del mundo que|ex campeon|excampeon)\b",
+    r"\bcampeon\w* del mundo (con (la seleccion|el seleccionado|argentina|alemania|espana|francia|italia|brasil|uruguay|inglaterra)|en \d{4})\b",
+    r"^asi\b",
     r"\b(sudamericano|panamericano|latinoamericano|continental)\b(?!.*\b(mundial|del mundo|world)\b)",
 ]
 HARD_RE = [re.compile(p) for p in HARD_EXCLUDE]
@@ -154,8 +214,8 @@ HARD_RE = [re.compile(p) for p in HARD_EXCLUDE]
 # Rechazo blando: si matchea, el evento queda con confianza media (página sí, email no)
 SOFT_EXCLUDE = [
     r"\b(serian|seria|casi|cerca de|a un paso)\b",
-    r"\b(ex campeon|excampeon|leyenda|retiro|se retira)\b",
-    r"\b(juvenil|sub ?\d+|cadete)\b",  # títulos juveniles: válidos pero verificar
+    r"\b(leyenda|retiro|se retira)\b",
+    r"\b(juvenil|sub ?\d+|cadete|mundialista)\b",  # títulos juveniles / gentilicio ambiguo
 ]
 SOFT_RE = [re.compile(p) for p in SOFT_EXCLUDE]
 
@@ -207,10 +267,11 @@ def classify(title: str, desc: str):
     nd = norm(desc)[:400]
     reasons = []
 
-    medal = None
+    medal, span = None, None
     for rx, m in PODIUM_RE:
-        if rx.search(nt):
-            medal = m
+        mt = rx.search(nt)
+        if mt:
+            medal, span = m, mt.span()
             reasons.append(f"podium:title:{rx.pattern[:40]}")
             break
     title_hit = medal is not None
@@ -226,9 +287,37 @@ def classify(title: str, desc: str):
     if not (ARG_RE.search(nt) or ARG_RE.search(nd)):
         return "reject", None, ["no-arg-marker"]
 
+    # Nota histórica/comparativa: año pasado en el título junto a frase de podio
+    if title_hit and OLD_YEAR_RE.search(nt):
+        return "reject", None, ["old-year"]
+
     for rx in HARD_RE:
         if rx.search(nt):
             return "reject", None, [f"hard:{rx.pattern[:50]}"]
+
+    # ---- Atribución del logro: ¿el campeón es Argentina u otro país? ----
+    if title_hit:
+        ps, pe = span
+        # el marcador argentino debe estar razonablemente cerca de la frase de podio
+        arg_spans = [m.span() for m in ARG_RE.finditer(nt)]
+        near = any(s <= pe + 45 and e >= ps - 70 for s, e in arg_spans)
+        if not near:
+            return "reject", None, ["arg-far-from-podium"]
+
+        # sujeto extranjero más pegado a la frase de campeonato que el argentino
+        f_before = [m.end() for m in FOREIGN_RE.finditer(nt) if m.end() <= ps + 12]
+        a_before = [e for s, e in arg_spans if e <= ps + 12]
+        veto_a = bool(f_before) and (not a_before or max(f_before) > max(a_before))
+        veto_b = bool(DEFEAT_RE.search(nt) or ANTE_RE.search(nt) or SCORE_RE.search(nt))
+        veto_c = bool(ARG_LOST_RE.search(nt))
+        if veto_a or veto_b or veto_c:
+            if SILVER_RESCUE_RE.search(nt):
+                medal, reasons = "plata", reasons + ["rescued:subcampeonato-argentino"]
+            elif BRONZE_RESCUE_RE.search(nt):
+                medal, reasons = "bronce", reasons + ["rescued:bronce-argentino"]
+            else:
+                which = "foreign-subject" if veto_a else ("defeated-argentina" if veto_b else "argentina-lost")
+                return "reject", None, [which]
 
     soft = [rx.pattern[:40] for rx in SOFT_RE if rx.search(nt)]
     if soft:
@@ -239,10 +328,29 @@ def classify(title: str, desc: str):
 
 # ------------------------------------------------------------------ dedup ---
 
+# Tokens presentes en casi cualquier candidato: no aportan para distinguir eventos
+GENERIC_TOKENS = {
+    "argentina", "argentino", "argentinos", "argentinas", "seleccion", "seleccionado",
+    "mundial", "mundo", "campeon", "campeona", "campeones", "campeonas", "campeonato",
+    "subcampeon", "subcampeona", "subcampeones", "subcampeonato", "consagro", "corono",
+    "titulo", "final", "copa", "medalla", "world", "champion", "historico", "historica",
+}
+
+def core_tokens(s: str):
+    return {t for t in sig_tokens(s) if t not in GENERIC_TOKENS}
+
 def jaccard(a: set, b: set) -> float:
     if not a or not b:
         return 0.0
     return len(a & b) / len(a | b)
+
+def same_event(tokens_a: set, medal_a: str, tokens_b: set, medal_b: str) -> bool:
+    """Dos titulares hablan del mismo evento si comparten medalla y suficiente léxico distintivo."""
+    if medal_a != medal_b and "podio" not in (medal_a, medal_b) and "medalla" not in (medal_a, medal_b):
+        return False
+    if jaccard(tokens_a, tokens_b) >= 0.3:
+        return True
+    return len(tokens_a & tokens_b) >= 1 and (len(tokens_a) <= 6 or len(tokens_b) <= 6)
 
 def event_id(title: str) -> str:
     return hashlib.sha1(" ".join(sorted(sig_tokens(title))).encode()).hexdigest()[:12]
@@ -314,41 +422,36 @@ def main():
         k: v for k, v in seen.items()
         if v.get("date", "1970-01-01") >= (now - timedelta(days=21)).date().isoformat()
     }
-    recent_token_sets = [(k, set(v.get("tokens", []))) for k, v in recent_seen.items()]
+    recent_events = [(k, set(v.get("core", v.get("tokens", []))), v.get("medal", "podio")) for k, v in recent_seen.items()]
 
+    accepted = sorted([c for c in candidates if c["verdict"] == "accept"], key=lambda c: (c["date"], len(c["title"])))
     new_events = []
-    for c in [c for c in candidates if c["verdict"] == "accept"]:
-        toks = sig_tokens(c["title"])
+    for c in accepted:
+        core = core_tokens(c["title"])
         eid = event_id(c["title"])
         if eid in seen:
             continue
-        dup_of = None
-        for k, ts in recent_token_sets:
-            if jaccard(toks, ts) >= 0.45:
-                dup_of = k
-                break
+        medal = c["medal"] or "podio"
+        # ¿ya cubierto en corridas anteriores?
+        dup_of = next((k for k, ts, m in recent_events if same_event(core, medal, ts, m)), None)
         if dup_of:
-            seen[eid] = {"date": c["date"], "tokens": sorted(toks), "dup_of": dup_of, "title": c["title"]}
+            seen[eid] = {"date": c["date"], "core": sorted(core), "medal": medal, "dup_of": dup_of, "title": c["title"]}
             continue
-        # dedup entre los nuevos de esta corrida
-        merged = False
-        for ev in new_events:
-            if jaccard(toks, set(ev["_tokens"])) >= 0.45:
-                merged = True
-                break
-        if merged:
-            seen[eid] = {"date": c["date"], "tokens": sorted(toks), "dup_of": "same-run", "title": c["title"]}
+        # dedup entre los nuevos de esta corrida (gana el titular más corto/limpio)
+        twin = next((ev for ev in new_events if same_event(core, medal, set(ev["_core"]), ev["medal"])), None)
+        if twin:
+            seen[eid] = {"date": c["date"], "core": sorted(core), "medal": medal, "dup_of": twin["id"], "title": c["title"]}
+            twin["_core"] = sorted(set(twin["_core"]) | core)  # enriquecer el cluster
             continue
         ev = {
-            "id": eid, "date": c["date"], "title": c["title"], "source": c["source"],
-            "url": c["url"], "medal": c["medal"] or "podio", "_tokens": sorted(toks),
+            "id": eid, "date": c["date"], "title": strip_source(c["title"]), "source": c["source"],
+            "url": c["url"], "medal": medal, "_core": sorted(core),
         }
         new_events.append(ev)
-        seen[eid] = {"date": c["date"], "tokens": sorted(toks), "title": c["title"]}
-        recent_token_sets.append((eid, toks))
+        seen[eid] = {"date": c["date"], "core": sorted(core), "medal": medal, "title": c["title"]}
 
     for ev in new_events:
-        ev.pop("_tokens", None)
+        recent_events.append((ev["id"], set(ev.pop("_core")), ev["medal"]))
     if new_events:
         podios = new_events + podios
         with open(PODIOS_PATH, "w", encoding="utf-8") as f:

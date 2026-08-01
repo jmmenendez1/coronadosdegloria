@@ -26,17 +26,32 @@ jobs:
         run: |
           if [ -z "$BUTTONDOWN_API_KEY" ]; then echo '{"error":"secret no configurado"}' > buttondown.json; exit 0; fi
           curl -s -H "Authorization: Token $BUTTONDOWN_API_KEY" https://api.buttondown.com/v1/newsletters -o /tmp/bd.json || true
+          curl -s -H "Authorization: Token $BUTTONDOWN_API_KEY" "https://api.buttondown.com/v1/emails" -o /tmp/bde.json || true
+          curl -s -H "Authorization: Token $BUTTONDOWN_API_KEY" "https://api.buttondown.com/v1/subscribers" -o /tmp/bds.json || true
           python3 - <<'EOF'
           import json
           out = {}
           try:
               d = json.load(open('/tmp/bd.json'))
-              ns = d.get('results', [])
               out = {'ok': True, 'newsletters': [
-                  {'username': n.get('username'), 'name': n.get('name')} for n in ns
+                  {'username': n.get('username'), 'name': n.get('name')} for n in d.get('results', [])
               ]}
-          except Exception as e:
-              out = {'ok': False, 'raw': open('/tmp/bd.json').read()[:300] if __import__('os').path.exists('/tmp/bd.json') else 'no-response'}
+              try:
+                  e = json.load(open('/tmp/bde.json'))
+                  out['emails'] = [
+                      {'subject': m.get('subject'), 'status': m.get('status'), 'created': m.get('creation_date')}
+                      for m in e.get('results', [])[-5:]
+                  ]
+              except Exception:
+                  out['emails'] = 'unavailable'
+              try:
+                  s = json.load(open('/tmp/bds.json'))
+                  out['subscriber_count'] = s.get('count', len(s.get('results', [])))
+              except Exception:
+                  out['subscriber_count'] = 'unavailable'
+          except Exception:
+              import os
+              out = {'ok': False, 'raw': open('/tmp/bd.json').read()[:300] if os.path.exists('/tmp/bd.json') else 'no-response'}
           json.dump(out, open('buttondown.json', 'w'))
           print(json.dumps(out, indent=2))
           EOF
