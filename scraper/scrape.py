@@ -36,7 +36,7 @@ SEEN_PATH = os.path.join(DATA_DIR, "seen.json")
 NEW_EVENTS_PATH = os.path.join(ROOT, "new_events.json")
 CANDIDATES_PATH = os.path.join(ROOT, "candidates.json")
 
-UA = "Mozilla/5.0 (compatible; OtraCoronacionDeGloria/1.0; +https://github.com/jmmenendez1/otra-coronacion-de-gloria)"
+UA = "Mozilla/5.0 (compatible; OtraCoronacionDeGloria/1.0; +https://github.com/jmmenendez1/coronadosdegloria)"
 
 # ---------------------------------------------------------------- queries ---
 
