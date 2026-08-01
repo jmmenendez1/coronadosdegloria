@@ -1,0 +1,49 @@
+name: Dry run (calibración)
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Días hacia atrás a analizar"
+        required: false
+        default: "30"
+
+permissions:
+  contents: read
+
+jobs:
+  dryrun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rastrear (sin tocar estado)
+        run: python3 scraper/scrape.py --dry-run --days "${{ github.event.inputs.days }}"
+      - name: Subir candidatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidates
+          path: candidates.json
+
+  buttondown-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar API key y obtener username
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+        run: |
+          if [ -z "$BUTTONDOWN_API_KEY" ]; then echo "Secret no configurado aún"; exit 0; fi
+          curl -s -w "\nSTATUS:%{http_code}\n" -H "Authorization: Token $BUTTONDOWN_API_KEY" \
+            https://api.buttondown.com/v1/newsletters | python3 -c '
+          import json,sys
+          raw = sys.stdin.read()
+          body, _, status = raw.rpartition("STATUS:")
+          print("HTTP", status.strip())
+          try:
+              d = json.loads(body)
+              for n in d.get("results", []):
+                  print("newsletter username:", n.get("username"))
+                  print("newsletter name:", n.get("name"))
+                  print("newsletter description:", n.get("description"))
+          except Exception as e:
+              print("no-json:", body[:300])
+          '

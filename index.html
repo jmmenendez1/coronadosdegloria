@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otra Coronación de Gloria — argentinos en podios mundiales</title>
+<meta name="description" content="Rastreador automático de argentinos y argentinas saliendo primeros, segundos o terceros en cualquier competencia mundial. Suscribite y enterate cada vez que pasa.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --celeste:#74ACDF; --celeste-deep:#3E7CB1; --navy:#152A45;
+    --gold:#C9A227; --gold-soft:#E8D48B;
+    --paper:#FBF8F1; --ink:#1C2B3A; --muted:#5D6B7A;
+    --card:#FFFFFF; --line:#E7E0D2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6}
+
+  .hero{background:linear-gradient(175deg,var(--navy) 0%, #1E3A5F 55%, var(--celeste-deep) 130%);color:#fff;padding:72px 20px 96px;text-align:center;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:auto 0 -1px 0;height:60px;background:var(--paper);clip-path:ellipse(60% 100% at 50% 100%)}
+  .sol{font-size:44px;margin-bottom:18px;display:inline-block;filter:drop-shadow(0 0 18px rgba(232,212,139,.65))}
+  .hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.4rem,6vw,4.3rem);line-height:1.05;letter-spacing:-.5px}
+  .hero h1 .gloria{color:var(--gold-soft);font-style:italic}
+  .anthem{margin-top:14px;font-family:'Fraunces',serif;font-style:italic;font-size:clamp(1rem,2.2vw,1.25rem);color:#C9D8EA}
+  .hero p.sub{max-width:620px;margin:22px auto 0;font-size:1.05rem;color:#DCE7F2}
+  .band{display:flex;justify-content:center;gap:8px;margin-top:26px}
+  .band span{width:52px;height:6px;border-radius:3px}
+  .band .c{background:var(--celeste)} .band .w{background:#fff} .band .g{background:var(--gold)}
+
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+
+  .signup{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 40px rgba(21,42,69,.10);padding:30px 28px;margin:-38px auto 0;position:relative;z-index:2;text-align:center}
+  .signup h2{font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:6px}
+  .signup p{color:var(--muted);font-size:.95rem;max-width:520px;margin:0 auto 18px}
+  .signup form{display:flex;gap:10px;max-width:460px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+  .signup input[type=email]{flex:1;min-width:220px;padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:1rem;font-family:inherit;background:#FDFCF9}
+  .signup input[type=email]:focus{outline:none;border-color:var(--celeste-deep)}
+  .signup button{padding:13px 22px;border:none;border-radius:12px;background:var(--celeste-deep);color:#fff;font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit;transition:background .15s}
+  .signup button:hover{background:var(--navy)}
+  .signup .fine{font-size:.78rem;color:var(--muted);margin-top:12px}
+
+  .stats{display:flex;justify-content:center;gap:14px;margin:38px 0 8px;flex-wrap:wrap}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 22px;text-align:center;min-width:110px}
+  .stat b{display:block;font-family:'Fraunces',serif;font-size:1.7rem}
+  .stat span{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+
+  .feed{margin:34px 0 60px}
+  .feed h2{font-family:'Fraunces',serif;font-size:1.8rem;margin-bottom:4px}
+  .feed .sub{color:var(--muted);font-size:.92rem;margin-bottom:22px}
+  .event{display:flex;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px;align-items:flex-start;transition:transform .12s, box-shadow .12s}
+  .event:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(21,42,69,.08)}
+  .medal{font-size:1.9rem;line-height:1;margin-top:2px}
+  .event h3{font-size:1.02rem;font-weight:600;line-height:1.4}
+  .event h3 a{color:var(--ink);text-decoration:none}
+  .event h3 a:hover{color:var(--celeste-deep);text-decoration:underline}
+  .meta{font-size:.82rem;color:var(--muted);margin-top:6px}
+  .meta .tag{display:inline-block;background:#F1EBDD;border-radius:999px;padding:1px 10px;margin-right:8px;font-weight:600;color:#8A7420}
+  .empty{background:var(--card);border:1.5px dashed var(--line);border-radius:16px;padding:44px 24px;text-align:center;color:var(--muted)}
+  .empty .mate{font-size:2.2rem;margin-bottom:10px}
+
+  footer{background:var(--navy);color:#B9C9DB;padding:36px 20px;text-align:center;font-size:.88rem}
+  footer a{color:var(--gold-soft);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  footer .sep{margin:0 10px;opacity:.5}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="sol">☀️</span>
+  <h1>Otra Coronación<br>de <span class="gloria">Gloria</span></h1>
+  <p class="anthem">«Coronados de gloria vivamos…» — y acá las contamos todas.</p>
+  <p class="sub">Un rastreador automático que revisa las noticias todas las mañanas buscando argentinos y argentinas que salieron <strong>primeros, segundos o terceros</strong> en cualquier competencia mundial. Fútbol, hockey, matemática, asado, tango, lo que sea. Si hay podio, te enterás.</p>
+  <div class="band"><span class="c"></span><span class="w"></span><span class="g"></span><span class="w"></span><span class="c"></span></div>
+</header>
+
+<div class="wrap">
+  <section class="signup" id="suscribite">
+    <h2>🇦🇷 No te pierdas ninguna</h2>
+    <p>Dejá tu email y recibí un correo <strong>solo los días que hay una coronación</strong>. Sin spam, sin resúmenes vacíos: si Argentina no se subió a un podio, silencio.</p>
+    <form action="https://buttondown.com/api/emails/embed-subscribe/BUTTONDOWN_USERNAME" method="post" target="popupwindow" onsubmit="window.open('https://buttondown.com/BUTTONDOWN_USERNAME','popupwindow')">
+      <input type="email" name="email" placeholder="tu@email.com" required>
+      <button type="submit">Quiero enterarme 🏆</button>
+    </form>
+    <p class="fine">Confirmás tu suscripción con un click (revisá el correo). Te podés dar de baja cuando quieras.</p>
+  </section>
+
+  <div class="stats" id="stats" hidden>
+    <div class="stat"><b id="n-oro">0</b><span>🥇 oros</span></div>
+    <div class="stat"><b id="n-plata">0</b><span>🥈 platas</span></div>
+    <div class="stat"><b id="n-bronce">0</b><span>🥉 bronces</span></div>
+  </div>
+
+  <section class="feed">
+    <h2>Últimas coronaciones</h2>
+    <p class="sub">Detectadas automáticamente en la prensa. Actualizado cada mañana.</p>
+    <div id="events"></div>
+  </section>
+</div>
+
+<footer>
+  <p>Hecho con orgullo y un poco de código 🧉</p>
+  <p style="margin-top:8px">
+    <a href="mailto:menendezjuanm@gmail.com?subject=Se%20les%20escap%C3%B3%20una%20coronaci%C3%B3n">¿Nos perdimos alguna? Avisanos</a>
+    <span class="sep">·</span>
+    <a href="https://github.com/jmmenendez1/otra-coronacion-de-gloria" rel="noopener">Código abierto</a>
+  </p>
+</footer>
+
+<script>
+const MEDAL = {oro:"🥇", plata:"🥈", bronce:"🥉", medalla:"🏅", podio:"🏅"};
+const MEDAL_NAME = {oro:"Oro", plata:"Plata", bronce:"Bronce", medalla:"Medalla", podio:"Podio"};
+
+fetch("data/podios.json", {cache:"no-store"})
+  .then(r => r.ok ? r.json() : [])
+  .catch(() => [])
+  .then(events => {
+    const box = document.getElementById("events");
+    if (!events || events.length === 0) {
+      box.innerHTML = `<div class="empty"><div class="mate">🧉⏳</div>
+        Todavía no registramos coronaciones — el rastreador corre todas las mañanas.<br>
+        Suscribite arriba y sé el primero en enterarte de la próxima.</div>`;
+      return;
+    }
+    const counts = {oro:0, plata:0, bronce:0};
+    box.innerHTML = events.map(ev => {
+      if (counts[ev.medal] !== undefined) counts[ev.medal]++;
+      const d = new Date(ev.date + "T12:00:00");
+      const fecha = isNaN(d) ? ev.date : d.toLocaleDateString("es-AR", {day:"numeric", month:"long", year:"numeric"});
+      const src = ev.source ? ` · ${esc(ev.source)}` : "";
+      return `<article class="event">
+        <div class="medal">${MEDAL[ev.medal] || "🏅"}</div>
+        <div><h3><a href="${esc(ev.url)}" rel="noopener" target="_blank">${esc(ev.title)}</a></h3>
+        <div class="meta"><span class="tag">${MEDAL_NAME[ev.medal] || "Podio"}</span>${fecha}${src}</div></div>
+      </article>`;
+    }).join("");
+    if (events.length > 0) {
+      document.getElementById("stats").hidden = false;
+      document.getElementById("n-oro").textContent = counts.oro;
+      document.getElementById("n-plata").textContent = counts.plata;
+      document.getElementById("n-bronce").textContent = counts.bronce;
+    }
+  });
+
+function esc(s){const d=document.createElement("div");d.textContent=s||"";return d.innerHTML.replace(/"/g,"&quot;")}
+</script>
+</body>
+</html>

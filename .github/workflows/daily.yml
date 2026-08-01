@@ -1,0 +1,54 @@
+name: Coronación diaria
+
+on:
+  schedule:
+    - cron: "23 10 * * *"   # 07:23 Argentina / 06:23 ET, todos los días
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "1 = crear email como borrador en vez de enviar"
+        required: false
+        default: ""
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-and-send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rastrear podios
+        run: python3 scraper/scrape.py
+
+      - name: ¿Hay eventos nuevos?
+        id: check
+        run: |
+          if [ -f new_events.json ]; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+            echo "Eventos nuevos encontrados:"
+            cat new_events.json
+          else
+            echo "new=false" >> "$GITHUB_OUTPUT"
+            echo "Sin coronaciones hoy. Silencio."
+          fi
+
+      - name: Commitear datos actualizados
+        run: |
+          git config user.name "coronacion-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "🏅 Actualización diaria de podios"
+          git push
+
+      - name: Enviar email a suscriptores
+        if: steps.check.outputs.new == 'true'
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: python3 scraper/send_email.py
