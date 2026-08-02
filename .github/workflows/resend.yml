@@ -12,7 +12,7 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   resend:
@@ -37,3 +37,12 @@ jobs:
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: python3 scraper/send_email.py
+
+      - name: Preservar diagnóstico si falló el envío
+        if: failure()
+        run: |
+          git config user.name "coronacion-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git pull --rebase origin main || true
+          git add data/last_email_error.json 2>/dev/null || true
+          git diff --cached --quiet || { git commit -m "⚠️ Error de envío preservado en data/last_email_error.json"; git push; }
