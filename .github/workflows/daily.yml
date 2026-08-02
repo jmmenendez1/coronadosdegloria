@@ -53,6 +53,17 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: python3 scraper/send_email.py
 
+      - name: Postear en X
+        if: steps.check.outputs.new == 'true' && github.event.inputs.dry_run != '1'
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          if [ -z "$X_API_KEY" ]; then echo "Secrets de X no configurados todavía; salteo."; exit 0; fi
+          python3 scraper/post_x.py
+
       - name: Preservar diagnóstico si falló el envío
         if: failure()
         run: |
