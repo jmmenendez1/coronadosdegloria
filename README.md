@@ -31,8 +31,10 @@ index.html             # landing page (GitHub Pages)
 
 - **Corrida manual:** Actions → "Coronación diaria" → Run workflow (`dry_run=1` para
   crear el email como borrador en vez de enviarlo).
-- **Calibración:** Actions → "Dry run (calibración)" → genera `candidates.json` como
-  artifact con todos los candidatos y el veredicto del filtro.
+- **Calibración:** Actions → "Dry run (calibración)" → publica `candidates.json` y
+  `buttondown.json` en el branch `calibration`.
+- **Reenvío manual:** Actions → "Reenviar coronación" con el `id` del evento
+  (está en `data/podios.json`). Útil si un envío falló definitivamente.
 - **Secreto requerido:** `BUTTONDOWN_API_KEY` (Settings → Secrets → Actions).
 
 Hecho con orgullo y un poco de código 🧉

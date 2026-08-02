@@ -1,0 +1,39 @@
+name: Reenviar coronación
+
+on:
+  workflow_dispatch:
+    inputs:
+      event_id:
+        description: "id del evento en data/podios.json"
+        required: true
+      dry_run:
+        description: "1 = crear como borrador en vez de enviar"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  resend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Armar new_events.json desde podios.json
+        run: |
+          python3 - <<'EOF'
+          import json
+          eid = "${{ github.event.inputs.event_id }}".strip()
+          podios = json.load(open('data/podios.json'))
+          ev = [e for e in podios if e['id'] == eid]
+          assert ev, f"evento {eid} no encontrado en data/podios.json"
+          json.dump(ev, open('new_events.json', 'w'), ensure_ascii=False)
+          print("Reenviando:", ev[0]['medal'], '—', ev[0]['title'])
+          EOF
+
+      - name: Enviar
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: python3 scraper/send_email.py
