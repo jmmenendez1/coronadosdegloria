@@ -8,6 +8,8 @@ Env:
 import json
 import os
 import sys
+import time
+import urllib.error
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -62,19 +64,53 @@ def main():
     payload = {"subject": subject, "body": body}
     payload["status"] = "draft" if os.environ.get("DRY_RUN") == "1" else "about_to_send"
 
-    req = urllib.request.Request(
-        API,
-        data=json.dumps(payload).encode(),
-        headers={"Authorization": f"Token {key}", "Content-Type": "application/json"},
-        method="POST",
-    )
-    try:
+    def post(p):
+        req = urllib.request.Request(
+            API,
+            data=json.dumps(p).encode(),
+            headers={"Authorization": f"Token {key}", "Content-Type": "application/json"},
+            method="POST",
+        )
         with urllib.request.urlopen(req, timeout=30) as r:
-            resp = json.load(r)
+            return json.load(r)
+
+    # Reintentos con espera para errores transitorios (5xx / 429)
+    last_code, last_body = None, ""
+    for attempt in range(1, 4):
+        try:
+            resp = post(payload)
             print(f"Email {'BORRADOR creado' if payload['status']=='draft' else 'ENVIADO'}: {resp.get('id')} — {subject}")
-    except urllib.error.HTTPError as e:
-        print(f"Buttondown error {e.code}: {e.read().decode()[:500]}", file=sys.stderr)
-        sys.exit(1)
+            return
+        except urllib.error.HTTPError as e:
+            last_code, last_body = e.code, e.read().decode()[:800]
+            print(f"[intento {attempt}/3] Buttondown error {last_code}: {last_body[:300]}", file=sys.stderr)
+            if last_code in (429, 500, 502, 503, 504) and attempt < 3:
+                time.sleep(25 * attempt)
+                continue
+            break
+        except Exception as e:
+            last_code, last_body = "conn", str(e)[:300]
+            print(f"[intento {attempt}/3] error de conexión: {e}", file=sys.stderr)
+            if attempt < 3:
+                time.sleep(25 * attempt)
+
+    # Falló definitivo: preservar el error y dejar el contenido como BORRADOR para no perder la coronación
+    from datetime import datetime, timezone
+    err = {
+        "when": datetime.now(timezone.utc).isoformat(),
+        "http": last_code,
+        "body": last_body,
+        "subject": subject,
+    }
+    os.makedirs(os.path.join(ROOT, "data"), exist_ok=True)
+    with open(os.path.join(ROOT, "data", "last_email_error.json"), "w", encoding="utf-8") as f:
+        json.dump(err, f, ensure_ascii=False, indent=2)
+    try:
+        resp = post({**payload, "status": "draft"})
+        print(f"Fallback: BORRADOR creado ({resp.get('id')}) — mandalo a mano desde Buttondown.", file=sys.stderr)
+    except Exception as e:
+        print(f"Fallback a borrador también falló: {e}", file=sys.stderr)
+    sys.exit(1)
 
 if __name__ == "__main__":
     main()

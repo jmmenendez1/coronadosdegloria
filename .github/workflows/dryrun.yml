@@ -15,7 +15,7 @@ jobs:
   dryrun:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Rastrear (sin tocar estado)
         run: python3 scraper/scrape.py --dry-run --days "${{ github.event.inputs.days }}"
