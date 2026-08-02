@@ -10,6 +10,7 @@ import os
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -52,7 +53,17 @@ def main():
         src = f" — _{ev['source']}_" if ev.get("source") else ""
         lines.append(f"{emoji} **[{ev['title']}]({ev['url']})**{src}")
         lines.append("")
+    # Link de compartir por WhatsApp (sirve para pasarla al grupo… o pegarla en el canal)
+    if len(events) == 1:
+        wa_body = f"{MEDAL_EMOJI.get(events[0]['medal'], '🏅')} ¡Otra coronación de gloria! {events[0]['title']} 🇦🇷\n\nSumate y despertate coronado: https://otracoronacion.github.io/"
+    else:
+        listado = "\n".join(f"{MEDAL_EMOJI.get(ev['medal'], '🏅')} {ev['title']}" for ev in events)
+        wa_body = f"🇦🇷 ¡{len(events)} coronaciones de gloria hoy!\n\n{listado}\n\nSumate y despertate coronado: https://otracoronacion.github.io/"
+    wa_link = "https://wa.me/?text=" + urllib.parse.quote(wa_body)
+
     lines += [
+        f"📲 **[Pasala al grupo — compartir por WhatsApp]({wa_link})**",
+        "",
         "---",
         "",
         "Ver todas las coronaciones: https://otracoronacion.github.io/",
