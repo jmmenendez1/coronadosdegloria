@@ -64,6 +64,38 @@ jobs:
           print(json.dumps(out, indent=2))
           EOF
 
+      - name: Probar vía de envío (programado 2036, sin envío real)
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+        run: |
+          python3 - <<'EOF'
+          import json, urllib.request, urllib.error, os
+          key = os.environ["BUTTONDOWN_API_KEY"]
+          out = json.load(open('buttondown.json'))
+          payload = {"subject": "[test interno — ignorar]", "body": "prueba de vía de envío",
+                     "status": "scheduled", "publish_date": "2036-01-01T12:00:00Z"}
+          req = urllib.request.Request("https://api.buttondown.com/v1/emails",
+              data=json.dumps(payload).encode(),
+              headers={"Authorization": f"Token {key}", "Content-Type": "application/json"}, method="POST")
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  resp = json.load(r)
+                  eid = resp.get("id")
+                  out["send_probe"] = {"result": "ACEPTADO (la vía de envío funciona)", "cleanup": None}
+                  # limpiar: borrar el email de prueba
+                  dreq = urllib.request.Request(f"https://api.buttondown.com/v1/emails/{eid}",
+                      headers={"Authorization": f"Token {key}"}, method="DELETE")
+                  try:
+                      urllib.request.urlopen(dreq, timeout=30)
+                      out["send_probe"]["cleanup"] = "test borrado"
+                  except Exception as e:
+                      out["send_probe"]["cleanup"] = f"NO se pudo borrar el test ({e}) — borralo del dashboard"
+          except urllib.error.HTTPError as e:
+              out["send_probe"] = {"result": "RECHAZADO", "http": e.code, "body": e.read().decode()[:600]}
+          json.dump(out, open('buttondown.json', 'w'))
+          print(json.dumps(out["send_probe"], indent=2, ensure_ascii=False))
+          EOF
+
       - name: Publicar resultados en branch calibration
         run: |
           git config user.name "coronacion-bot"
