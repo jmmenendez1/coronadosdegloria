@@ -30,17 +30,25 @@ jobs:
           curl -s -H "Authorization: Token $BUTTONDOWN_API_KEY" "https://api.buttondown.com/v1/subscribers" -o /tmp/bds.json || true
           python3 - <<'EOF'
           import json
+          SAFE_HINT_KEYS = ("status", "tier", "plan", "restrict", "paused", "disabled", "approved", "review", "sending", "flagged", "billing", "trial", "limit")
+          BLOCK_VALS = ("@",)  # nunca volcar emails/direcciones al branch público
           out = {}
           try:
               d = json.load(open('/tmp/bd.json'))
-              out = {'ok': True, 'newsletters': [
-                  {'username': n.get('username'), 'name': n.get('name')} for n in d.get('results', [])
-              ]}
+              out = {'ok': True, 'newsletters': []}
+              for n in d.get('results', []):
+                  entry = {'username': n.get('username'), 'name': n.get('name')}
+                  hints = {}
+                  for k, v in n.items():
+                      if any(h in k.lower() for h in SAFE_HINT_KEYS) and not (isinstance(v, str) and any(b in v for b in BLOCK_VALS)):
+                          hints[k] = v
+                  entry['flags'] = hints
+                  out['newsletters'].append(entry)
               try:
                   e = json.load(open('/tmp/bde.json'))
                   out['emails'] = [
                       {'subject': m.get('subject'), 'status': m.get('status'), 'created': m.get('creation_date')}
-                      for m in e.get('results', [])[-5:]
+                      for m in e.get('results', [])[-6:]
                   ]
               except Exception:
                   out['emails'] = 'unavailable'
