@@ -67,9 +67,14 @@ def oauth_request(method: str, url: str, json_body=None):
 def compose(ev) -> str:
     emoji = MEDAL_EMOJI.get(ev.get("medal"), "🏅")
     head = f"{emoji} ¡Otra coronación de gloria!\n\n"
-    tail = f"\n\nDespertate coronado 👉 {SITE}"
-    # los links cuentan 23 chars en X; presupuesto conservador para el título
-    budget = 280 - len(head) - (len(tail) - len(SITE) + 23)
+    # Sin link en el cuerpo: X cobra ~13x más por tweets con URL.
+    # El sitio va en la bio de la cuenta. (X_INCLUDE_LINK=1 para volver a incluirlo.)
+    if os.environ.get("X_INCLUDE_LINK") == "1":
+        tail = f"\n\nDespertate coronado 👉 {SITE}"
+        budget = 280 - len(head) - (len(tail) - len(SITE) + 23)
+    else:
+        tail = "\n\nDespertate coronado 🧉 (suscribite: link en la bio)"
+        budget = 280 - len(head) - len(tail)
     title = ev["title"].strip()
     if len(title) > budget:
         title = title[: budget - 1].rstrip() + "…"
