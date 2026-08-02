@@ -67,6 +67,7 @@ def main():
         "---",
         "",
         "Ver todas las coronaciones: https://otracoronacion.github.io/",
+        "Seguinos también en WhatsApp: https://whatsapp.com/channel/0029Vb85r2RDZ4Lb3Qsnkq0P",
         "",
         "_Recibís este correo porque te suscribiste a **Otra Coronación de Gloria**, el rastreador de argentinos en podios mundiales._",
     ]
