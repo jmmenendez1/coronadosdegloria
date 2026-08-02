@@ -102,5 +102,69 @@
     "medal": "oro",
     "dup_of": "eb2c01ef4a23",
     "title": "Argentina se corona campeona en la Copa Mundial WMH 2026 - Consulta Monterrey"
+  },
+  "7c76bc57c58e": {
+    "date": "2026-08-01",
+    "core": [
+      "anos",
+      "bicampeona",
+      "hockey",
+      "mayores"
+    ],
+    "medal": "oro",
+    "title": "Argentina se consagró bicampeona mundial de hockey de mayores de 50 años - bardeo.news"
+  },
+  "b90e56245022": {
+    "date": "2026-08-01",
+    "core": [
+      "2026",
+      "cuatro",
+      "fueron",
+      "master",
+      "seleccionados"
+    ],
+    "medal": "oro",
+    "dup_of": "eb2c01ef4a23",
+    "title": "Los cuatro seleccionados argentinos que fueron campeones en el Mundial Máster 2026 - ESPN Argentina"
+  },
+  "2e0c88f7881d": {
+    "date": "2026-08-01",
+    "core": [
+      "gano",
+      "hockey",
+      "oneto",
+      "rotterdam",
+      "vanina"
+    ],
+    "medal": "oro",
+    "dup_of": "7c76bc57c58e",
+    "title": "Con Vanina Oneto, la Selección argentina de hockey +50 ganó el Mundial de Rotterdam - Enterate Noticias"
+  },
+  "4de9ddc7d33c": {
+    "date": "2026-08-01",
+    "core": [
+      "bicampeona",
+      "capitana",
+      "oneto",
+      "vanina"
+    ],
+    "medal": "oro",
+    "dup_of": "7c76bc57c58e",
+    "title": "La Selección argentina +50, con Vanina Oneto como capitana, se consagró bicampeona mundial - La Unión Digital"
+  },
+  "1248af1fea2b": {
+    "date": "2026-08-01",
+    "core": [
+      "anos",
+      "bicampeona",
+      "hockey",
+      "leona",
+      "mayores",
+      "oneto",
+      "vanina"
+    ],
+    "medal": "oro",
+    "dup_of": "7c76bc57c58e",
+    "title": "Con la ex-Leona Vanina Oneto, la Selección argentina de hockey de mayores de 50 años se consagró bicampeona mundial - TN"
   }
 }
