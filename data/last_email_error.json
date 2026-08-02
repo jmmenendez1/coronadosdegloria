@@ -1,6 +1,0 @@
-{
-  "when": "2026-08-02T17:40:12.110451+00:00",
-  "http": 400,
-  "body": "{\"code\":\"sending_requires_confirmation\",\"detail\":\"Creating an email with status 'about_to_send' requires the X-Buttondown-Live-Dangerously header. This is only required once per API key.\",\"metadata\":{}}",
-  "subject": "🥇 Otra coronación de gloria"
-}
