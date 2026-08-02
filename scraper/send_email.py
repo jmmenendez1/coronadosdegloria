@@ -55,7 +55,7 @@ def main():
     lines += [
         "---",
         "",
-        "Ver todas las coronaciones: https://jmmenendez1.github.io/coronadosdegloria/",
+        "Ver todas las coronaciones: https://otracoronacion.github.io/",
         "",
         "_Recibís este correo porque te suscribiste a **Otra Coronación de Gloria**, el rastreador de argentinos en podios mundiales._",
     ]

@@ -3,7 +3,7 @@
 Rastreador automático de argentinos y argentinas saliendo **1°, 2° o 3°** en cualquier
 competencia mundial — deportes, olimpiadas científicas, gastronomía, tango, lo que sea.
 
-**Sitio:** https://jmmenendez1.github.io/coronadosdegloria/
+**Sitio:** https://otracoronacion.github.io/
 
 ## Cómo funciona
 
