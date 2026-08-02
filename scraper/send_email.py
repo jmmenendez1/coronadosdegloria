@@ -68,7 +68,12 @@ def main():
         req = urllib.request.Request(
             API,
             data=json.dumps(p).encode(),
-            headers={"Authorization": f"Token {key}", "Content-Type": "application/json"},
+            headers={
+                "Authorization": f"Token {key}",
+                "Content-Type": "application/json",
+                # Requerido por Buttondown para envíos reales por API (anti-disparo accidental)
+                "X-Buttondown-Live-Dangerously": "true",
+            },
             method="POST",
         )
         with urllib.request.urlopen(req, timeout=30) as r:
