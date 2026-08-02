@@ -4,17 +4,32 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   selftest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+
       - name: Self-test (postea y borra un tweet de prueba)
+        id: test
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-        run: python3 scraper/post_x.py --self-test
+        run: |
+          set -o pipefail
+          python3 scraper/post_x.py --self-test 2>&1 | tee xtest.log
+
+      - name: Preservar log si falló
+        if: failure()
+        run: |
+          git config user.name "coronacion-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git fetch origin calibration || true
+          git switch --orphan xtest-result
+          git add -f xtest.log
+          git commit -m "Log del self-test de X"
+          git push -f origin xtest-result
