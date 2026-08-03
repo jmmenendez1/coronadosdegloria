@@ -52,6 +52,8 @@ QUERIES_ES = [
     '"campeón del mundo" argentino',
     '"campeona del mundo" argentina',
     '"campeones del mundo" argentinos',
+    '"campeonas mundiales" argentinas',
+    '"campeonas del mundo" argentinas',
     'argentino "se consagró campeón" mundial',
     'argentina "se consagró campeona" mundial',
     '"subcampeón mundial" argentino',
@@ -93,7 +95,11 @@ def strip_source(title: str) -> str:
     return title.rsplit(" - ", 1)[0] if " - " in title else title
 
 def sig_tokens(s: str):
-    return {t for t in norm(strip_source(s)).split() if len(t) >= 4 and t not in STOPWORDS}
+    # palabras de 4+ letras, y números de 2+ cifras (distinguen categorías: +40 vs +50, sub 17, 2026…)
+    return {
+        t for t in norm(strip_source(s)).split()
+        if (len(t) >= 4 or (t.isdigit() and len(t) >= 2)) and t not in STOPWORDS
+    }
 
 # --------------------------------------------------------------- patterns ---
 # Todo se evalúa sobre texto normalizado (minúsculas, sin acentos).
@@ -357,6 +363,11 @@ def jaccard(a: set, b: set) -> float:
 def same_event(tokens_a: set, medal_a: str, tokens_b: set, medal_b: str) -> bool:
     """Dos titulares hablan del mismo evento si comparten medalla y suficiente léxico distintivo."""
     if medal_a != medal_b and "podio" not in (medal_a, medal_b) and "medalla" not in (medal_a, medal_b):
+        return False
+    # números de categoría distintos = eventos distintos (+45 IMC vs +50, sub 17 vs sub 20)
+    nums_a = {t for t in tokens_a if t.isdigit()}
+    nums_b = {t for t in tokens_b if t.isdigit()}
+    if nums_a and nums_b and not (nums_a & nums_b):
         return False
     if jaccard(tokens_a, tokens_b) >= 0.3:
         return True
