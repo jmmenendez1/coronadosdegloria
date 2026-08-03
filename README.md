@@ -7,7 +7,7 @@ competencia mundial — deportes, olimpiadas científicas, gastronomía, tango, 
 
 ## Cómo funciona
 
-1. Todas las mañanas (07:23 hora argentina) un workflow de GitHub Actions ejecuta
+1. Todas las mañanas (08:16 hora argentina — sí, por 1816 🇦🇷) un workflow de GitHub Actions ejecuta
    `scraper/scrape.py`, que consulta Google News RSS con ~20 búsquedas en español e inglés.
 2. Un pipeline de filtros descarta previas, aniversarios, apuestas y torneos no mundiales,
    y deduplica la cobertura de distintos medios en un solo evento.

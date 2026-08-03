@@ -2,7 +2,7 @@ name: Coronación diaria
 
 on:
   schedule:
-    - cron: "23 10 * * *"   # 07:23 Argentina / 06:23 ET, todos los días
+    - cron: "16 11 * * *"   # 08:16 Argentina — la épica de 1816 🇦🇷 (GitHub puede demorarlo)
   workflow_dispatch:
     inputs:
       dry_run:
