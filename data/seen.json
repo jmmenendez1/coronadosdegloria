@@ -192,5 +192,26 @@
     "medal": "oro",
     "dup_of": "7c76bc57c58e",
     "title": "Con la inoxidable Vanina Oneto, Argentina se consagró bicampeona de la Copa Mundial femenina de hockey +50 - Olé"
+  },
+  "d13b6008c92a": {
+    "date": "2026-08-02",
+    "core": [
+      "messi",
+      "prelista",
+      "prestianni"
+    ],
+    "medal": "oro",
+    "title": "Messi y Prestianni en prelista de campeón Argentina para el Mundial - La Propuesta Digital"
+  },
+  "015d5a96f0bc": {
+    "date": "2026-08-02",
+    "core": [
+      "correntina",
+      "hockey",
+      "master"
+    ],
+    "medal": "oro",
+    "dup_of": "7c76bc57c58e",
+    "title": "Una correntina es campeona mundial con Argentina en hockey Máster +45 IMC - Diario El Libertador de Corrientes"
   }
 }
