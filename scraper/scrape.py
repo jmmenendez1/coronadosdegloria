@@ -38,6 +38,12 @@ CANDIDATES_PATH = os.path.join(ROOT, "candidates.json")
 
 UA = "Mozilla/5.0 (compatible; OtraCoronacionDeGloria/1.0; +https://github.com/otracoronacion/otracoronacion.github.io)"
 
+# Medios que reciclan notas viejas con fecha fresca (fuente de falsos positivos).
+# Se compara contra el nombre de fuente normalizado (minúsculas, sin acentos).
+BLOCKED_SOURCES = {
+    "la propuesta digital",
+}
+
 # ---------------------------------------------------------------- queries ---
 
 QUERIES_ES = [
@@ -391,7 +397,10 @@ def main():
 
     candidates = []
     for it in by_title.values():
-        if it["dt"] and it["dt"] < cutoff:
+        # sin fecha parseable → afuera (antes pasaba de largo el filtro de recencia)
+        if it["dt"] is None or it["dt"] < cutoff:
+            continue
+        if norm(it.get("source", "")) in BLOCKED_SOURCES:
             continue
         verdict, medal, reasons = classify(it["title"], it["desc"])
         if verdict == "reject" and reasons == ["no-podium-pattern"]:
