@@ -190,6 +190,7 @@ HARD_EXCLUDE = [
     r"\bsi (la seleccion|argentina|sale|gana|es|se consagra)\b",
     r"\b(donde ver|como ver|a que hora|hora y tv|en vivo|en directo|minuto a minuto|formaciones|posibles formaciones|fixture|calendario|sorteo|entradas|amistoso\w*)\b",
     r"\b(previa|palpita|antesala|expectativa por|se prepara|se alista|rumbo al|de cara al|clasifico|clasificaron|clasifica)\b",
+    r"\b(prelista|pre lista|lista de (convocados|buena fe)|convocad\w+|convocatoria\w*|citad\w+|nomina|prenomina|plantel|refuerzo\w*|se suma\w*|se incorpora\w*|para el mundial|de cara al mundial)\b",
     r"\b(se corre|se juega|se disputa\w*|se celebrara|se realizara|sera sede|defin\w+|disputa\w*|entregar\w+)\b",
     r"\b(a \d+ anos|anos despues|anos mas tarde|aniversario|efemerides|se cumplen|recuerd\w+|recordo|homenaje\w*|murio|fallecio|fallecimiento|adios a|luto|la historia|historico rival|palmares|listado|lista de|record\w*|vigente|defensor\w* del titulo)\b",
     r"\b(apuest\w+|apost\w+|cuotas|pronostic\w*|prediccion\w*|predijo|tarot\w*|vidente|supercomputadora|simulador|videojuego|fifa \d+|quiniela|influencer\w*|donacion\w*|salia campeon)\b",
