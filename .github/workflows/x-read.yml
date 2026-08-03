@@ -1,0 +1,45 @@
+name: Leer tweets (diagnóstico)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ids:
+        description: "IDs de tweets separados por coma"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Leer y publicar en branch
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+          sys.path.insert(0, 'scraper')
+          from post_x import oauth_request
+          out = []
+          for tid in "${{ github.event.inputs.ids }}".split(","):
+              tid = tid.strip()
+              try:
+                  r = oauth_request("GET", f"https://api.x.com/2/tweets/{tid}")
+                  out.append({"id": tid, "text": r.get("data", {}).get("text"), "raw": r})
+              except Exception as e:
+                  out.append({"id": tid, "error": str(e)[:300]})
+          json.dump(out, open("tweets.json", "w"), ensure_ascii=False, indent=2)
+          print(json.dumps(out, ensure_ascii=False, indent=2))
+          EOF
+          git config user.name "coronacion-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git switch --orphan tweets-read
+          git add -f tweets.json
+          git commit -m "lectura de tweets"
+          git push -f origin tweets-read
