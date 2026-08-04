@@ -162,7 +162,9 @@ FOREIGN = (
     r"belg\w+|suiz\w+|suec\w+|norueg\w+|danes\w+|dinamarca|polac\w+|polonia|"
     r"austral\w+|canad\w+|kenia\w*|etiop\w+|jamaiq\w+|jamaica|cuban\w+|cuba\b|"
     r"venezol\w+|venezuela|chec\w+|rus\w+|ucrani\w+|serbi\w+|griego\w*|grecia|"
-    r"turc\w+|turquia|irani\w+|iran\b|indi[oa]s?\b|india\b|corean\w+|corea\b)"
+    r"turc\w+|turquia|irani\w+|iran\b|indi[oa]s?\b|india\b|corean\w+|corea\b|"
+    r"sudafric\w+|south africa|springboks|nueva zelanda|neozeland\w+|all blacks|"
+    r"fiji\w*|tonga\w*|samoa\w*|gales\b|escoc\w+|irland\w+)"
 )
 FOREIGN_RE = re.compile(rf"\b{FOREIGN}\b")
 
@@ -202,6 +204,8 @@ HARD_EXCLUDE = [
     r"\bsi (la seleccion|argentina|sale|gana|es|se consagra)\b",
     r"\b(donde ver|como ver|a que hora|hora y tv|en vivo|en directo|minuto a minuto|formaciones|posibles formaciones|fixture|calendario|sorteo|entradas|amistoso\w*)\b",
     r"\b(previa|palpita|antesala|expectativa por|se prepara|se alista|rumbo al|de cara al|clasifico|clasificaron|clasifica)\b",
+    r"\b(desafi\w+|hay que saber|todo lo que|partido (vs|ante|contra)|reciben? a|visitan? a)\b",
+    r"\ba l[oa]s campeon\w+ del mundo\b",
     r"\b(prelista|pre lista|lista de (convocados|buena fe)|convocad\w+|convocatoria\w*|citad\w+|nomina|prenomina|plantel|refuerzo\w*|se suma\w*|se incorpora\w*|para el mundial|de cara al mundial)\b",
     r"\b(se corre|se juega|se disputa\w*|se celebrara|se realizara|sera sede|defin\w+|disputa\w*|entregar\w+)\b",
     r"\b(a \d+ anos|anos despues|anos mas tarde|aniversario|efemerides|se cumplen|recuerd\w+|recordo|homenaje\w*|murio|fallecio|fallecimiento|adios a|luto|la historia|historico rival|palmares|listado|lista de|record\w*|vigente|defensor\w* del titulo)\b",
