@@ -26,6 +26,11 @@ jobs:
       - name: Rastrear podios
         run: python3 scraper/scrape.py
 
+      - name: Verificar con IA (Haiku)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python3 scraper/verify_llm.py
+
       - name: ¿Hay eventos nuevos?
         id: check
         run: |
@@ -51,7 +56,12 @@ jobs:
         env:
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
-        run: python3 scraper/send_email.py
+        run: |
+          if [ -f llm_failed ]; then
+            echo "⚠️ El verificador IA tuvo fallas: el email queda como BORRADOR para revisión."
+            export DRY_RUN=1
+          fi
+          python3 scraper/send_email.py
 
       - name: Postear en X
         if: steps.check.outputs.new == 'true' && github.event.inputs.dry_run != '1'
@@ -61,6 +71,7 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
         run: |
+          if [ -f llm_failed ]; then echo "⚠️ Verificador IA con fallas: no tuiteo."; exit 0; fi
           if [ -z "$X_API_KEY" ]; then echo "Secrets de X no configurados todavía; salteo."; exit 0; fi
           python3 scraper/post_x.py
 

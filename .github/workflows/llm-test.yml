@@ -1,0 +1,29 @@
+name: Test del verificador IA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  golden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Golden set (5 falsos positivos históricos + 5 coronaciones reales)
+        id: golden
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python3 scraper/verify_llm.py --test
+
+      - name: Publicar resultados en branch
+        run: |
+          git config user.name "coronacion-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git switch --orphan llm-test-result
+          git add -f llm_test.json 2>/dev/null || { echo '{"error":"sin resultados"}' > llm_test.json; git add -f llm_test.json; }
+          git commit -m "Resultado del golden set del verificador IA"
+          git push -f origin llm-test-result
