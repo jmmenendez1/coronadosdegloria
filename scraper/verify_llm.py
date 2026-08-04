@@ -35,6 +35,8 @@ Recibís el titular de una noticia. Respondé ÚNICAMENTE un JSON válido, sin t
 
 es_coronacion = true SOLO si el titular informa un HECHO CONSUMADO: una persona o un equipo ARGENTINO obtuvo el 1°, 2° o 3° puesto (oro/plata/bronce, campeón/subcampeón/tercero) en un campeonato MUNDIAL, copa del mundo u olimpiada internacional.
 
+IMPORTANTE: los mundiales de categoría SÍ cuentan como mundiales — juveniles (sub 17, sub 20), masters/veteranos (+40, +50), por género, por peso, por especialidad, y disciplinas no deportivas (matemática, química, asado, tango, peluquería). Lo que importa es que sea el campeonato MUNDIAL de esa categoría o disciplina.
+
 es_coronacion = false si ocurre cualquiera de estas:
 - previa o partido futuro ("desafía", "enfrenta", "buscará", "va por", fixture, dónde ver)
 - convocatorias, prelistas, nóminas, refuerzos, mercado de pases
