@@ -373,5 +373,19 @@
     "medal": "oro",
     "dup_of": "7c76bc57c58e",
     "title": "Otro triunfo épico ante Inglaterra, pero en el hockey: Las Leonas + 50 se consagraron bicampeonas mundiales - Gente de Salta"
+  },
+  "276055fc7cb1": {
+    "date": "2026-08-05",
+    "core": [
+      "100",
+      "125",
+      "bicampeon",
+      "bustos",
+      "longcasting",
+      "salvador"
+    ],
+    "medal": "oro",
+    "dup_of": "ade7327efd97",
+    "title": "Argentina campeón del mundo de longcasting, salvador bustos bicampeón en 100 y 125 grs - El diario de Tandil"
   }
 }
