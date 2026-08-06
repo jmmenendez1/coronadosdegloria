@@ -387,5 +387,33 @@
     "medal": "oro",
     "dup_of": "ade7327efd97",
     "title": "Argentina campeón del mundo de longcasting, salvador bustos bicampeón en 100 y 125 grs - El diario de Tandil"
+  },
+  "1e0f96f781bb": {
+    "date": "2026-08-05",
+    "core": [
+      "acerca",
+      "albiceleste",
+      "castro",
+      "goles",
+      "mientras",
+      "otro",
+      "roma",
+      "soule",
+      "victoria"
+    ],
+    "medal": "oro",
+    "title": "La Roma albiceleste: Victoria con goles de Castro y Soulé mientras se acerca otro campeón del mundo argentino - El Gráfico",
+    "llm_rejected": "Relato de partido futuro o reciente sin confirmar un podio mundial consumado"
+  },
+  "03429cd8552a": {
+    "date": "2026-08-06",
+    "core": [
+      "40",
+      "fueron",
+      "gualeguaychuenses",
+      "mundiales"
+    ],
+    "medal": "oro",
+    "title": "Dos gualeguaychuenses fueron campeonas mundiales con la Selección Argentina +40 - El Día de Gualeguaychú"
   }
 }
