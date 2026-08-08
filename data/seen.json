@@ -415,5 +415,133 @@
     ],
     "medal": "oro",
     "title": "Dos gualeguaychuenses fueron campeonas mundiales con la Selección Argentina +40 - El Día de Gualeguaychú"
+  },
+  "6e900a8dba79": {
+    "date": "2026-08-07",
+    "core": [
+      "dance",
+      "franco",
+      "gano",
+      "just",
+      "kazajistan",
+      "nuevo",
+      "vitali"
+    ],
+    "medal": "oro",
+    "dup_of": "2e0c88f7881d",
+    "title": "Franco Vitali ganó el título mundial de Just Dance en Kazajistán y le dio a Argentina un nuevo campeón - Infobae"
+  },
+  "a42208d1babc": {
+    "date": "2026-08-07",
+    "core": [
+      "biotecnologia",
+      "dance",
+      "derroto",
+      "francia",
+      "ingeniero",
+      "just",
+      "salio"
+    ],
+    "medal": "oro",
+    "title": "Es argentino, ingeniero en biotecnología y salió campeón del Mundial de Just Dance: en la final derrotó a Francia - TyC Sports"
+  },
+  "a9b75551f236": {
+    "date": "2026-08-07",
+    "core": [
+      "bronce",
+      "colon",
+      "colonense",
+      "gano",
+      "internacional",
+      "judoca",
+      "podio",
+      "suecia"
+    ],
+    "medal": "bronce",
+    "title": "Colón y la Argentina en un podio internacional: judoca colonense ganó la medalla de bronce en el mundial de Suecia - Elentrerios.com"
+  },
+  "e1d9f30cd183": {
+    "date": "2026-08-07",
+    "core": [
+      "dance",
+      "esports",
+      "francia",
+      "franco",
+      "just",
+      "kazajistan",
+      "orgullo",
+      "salio",
+      "vencer",
+      "vitali"
+    ],
+    "medal": "oro",
+    "dup_of": "eb2c01ef4a23",
+    "title": "Orgullo argentino en los esports: Franco Vitali salió campeón del mundo de Just Dance en Kazajistán tras vencer a Francia - Somos Jujuy"
+  },
+  "0e1e46446c25": {
+    "date": "2026-08-08",
+    "core": [
+      "caperucita",
+      "futbol",
+      "muchas",
+      "rojas",
+      "tiene"
+    ],
+    "medal": "oro",
+    "title": "Caperucita campeón del mundo: el fútbol argentino tiene muchas, rojas o no - El Ciudadano",
+    "llm_rejected": "titular ambiguo sin datos concretos de podio argentino consumado"
+  },
+  "34cf792e640b": {
+    "date": "2026-08-08",
+    "core": [
+      "dance",
+      "francia",
+      "historia",
+      "hizo",
+      "ingeniero",
+      "just"
+    ],
+    "medal": "oro",
+    "dup_of": "c7b13a43c6e7",
+    "title": "Argentina campeón del mundo ante Francia: un ingeniero hizo historia en una final de Just Dance - C5N"
+  },
+  "8a8598486874": {
+    "date": "2026-08-08",
+    "core": [
+      "corona",
+      "dance",
+      "francia",
+      "franco",
+      "ingeniero",
+      "just",
+      "kazajistan",
+      "vencer",
+      "vitali"
+    ],
+    "medal": "oro",
+    "dup_of": "c7d6f8cc89b5",
+    "title": "El ingeniero argentino Franco Vitali se corona campeón mundial de Just Dance tras vencer a Francia en Kazajistán - noticias24hrs.com.ve"
+  },
+  "ce6b7525d236": {
+    "date": "2026-08-08",
+    "core": [
+      "18",
+      "19",
+      "anos",
+      "aprendizaje",
+      "corea",
+      "encima",
+      "expectativa",
+      "fuimos",
+      "obtuvieron",
+      "priorizar",
+      "reconocimiento",
+      "resultado",
+      "robotica",
+      "tienen"
+    ],
+    "medal": "oro",
+    "dup_of": "7c76bc57c58e",
+    "title": "Tienen 18 y 19 años, son argentinos y obtuvieron un reconocimiento en el Mundial de Robótica en Corea del Sur: \"Fuimos con la expectativa de priorizar el aprendizaje por encima del resultado\" - clarin.com"
   }
 }
